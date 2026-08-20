@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Run a real AIMarket capability, inspect Metis verification, and receive a Hub receipt — no wallet or local cluster.">
+  <meta name="theme-color" content="#060914">
+  <title>AIMarket Playground — First verified invoke</title>
+  <link rel="stylesheet" href="/assets/playground.css?v=20260820g">
+  <script src="/assets/i18n.js?v=20260820d" defer></script>
+  <script src="/assets/playground.js?v=20260820e" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#playground" data-i18n="a11y.skip">Skip to playground</a>
+  <div class="scene" aria-hidden="true">
+    <div class="scene-grid"></div><i class="orb orb-a"></i><i class="orb orb-b"></i><i class="noise"></i>
+  </div>
+
+  <header class="nav">
+    <a class="brand" href="/" aria-label="AIMarket Playground home" data-i18n-aria-label="a11y.home"><span>AI</span>Market <b>Playground</b></a>
+    <nav aria-label="Primary navigation" data-i18n-aria-label="nav.primary">
+      <a href="https://use.modelmarket.dev/" rel="noopener" data-i18n="nav.useCases">Use cases</a>
+      <a href="https://modelmarket.dev/" rel="noopener" data-i18n="nav.hub">Hub</a>
+      <a href="https://github.com/alexar76/aicom/tree/main/create-aimarket-agent" rel="noopener" data-i18n="nav.cli">CLI</a>
+    </nav>
+    <div class="language-switcher" aria-label="Language" data-i18n-aria-label="nav.language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="es" aria-pressed="false">ES</button><button type="button" data-lang="fr" aria-pressed="false">FR</button><button type="button" data-lang="zh" aria-pressed="false">中文</button>
+    </div>
+    <span class="network-pill"><i></i> <span data-i18n="network.real">Real network</span></span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="kicker"><span>01</span> <span data-i18n="hero.kicker">Zero setup · developer activation</span></p>
+        <h1 id="hero-title"><span data-i18n="hero.title">Make the network</span> <em data-i18n="hero.answer">answer.</em></h1>
+        <p class="hero-lead" data-i18n="hero.lead">One real GAIA reading travels through the Hub, into a Metis confidence gate, and comes back with a signed Hub receipt.</p>
+        <div class="hero-proof" aria-label="Playground properties" data-i18n-aria-label="proof.properties">
+          <span><i>✓</i> <span data-i18n="proof.noAccount">No account</span></span><span><i>✓</i> <span data-i18n="proof.noWallet">No wallet</span></span><span><i>✓</i> <span data-i18n="proof.noCluster">No local cluster</span></span>
+        </div>
+      </div>
+      <aside class="signal-card" aria-label="Live route preview" data-i18n-aria-label="route.preview">
+        <div class="signal-head"><span><i></i> <span data-i18n="route.armed">ROUTE ARMED</span></span><b data-i18n="route.trial">FREE TRIAL</b></div>
+        <div class="signal-orbit" aria-hidden="true"><i></i><b data-i18n="route.run">RUN</b></div>
+        <ol>
+          <li><span>01</span><strong>GAIA</strong><small data-i18n="route.physicalData">physical-world data</small></li>
+          <li><span>02</span><strong>HUB</strong><small data-i18n="route.invokeReceipt">invoke + receipt</small></li>
+          <li><span>03</span><strong>METIS</strong><small data-i18n="route.confidence">confidence gate</small></li>
+        </ol>
+      </aside>
+    </section>
+
+    <section id="playground" class="workspace" aria-labelledby="workspace-title" aria-busy="false">
+      <header class="workspace-head">
+        <div><p class="section-label" data-i18n="workspace.label">Proof in one click</p><h2 id="workspace-title" data-i18n="workspace.title">Run the golden path</h2></div>
+        <div class="workspace-status"><span id="status-dot"></span><b id="status-label" data-i18n="status.ready">READY</b><small id="run-id" data-i18n="status.noRun">No run yet</small></div>
+      </header>
+
+      <div class="workspace-grid">
+        <article class="console input-console">
+          <header class="console-head"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span>first_invoke.py</span><b data-i18n="console.realHttp">REAL HTTP</b></header>
+          <div class="device-row">
+            <label for="device" data-i18n="console.device">GAIA DEVICE</label>
+            <div><span aria-hidden="true">⌁</span><input id="device" value="om-wx-01" maxlength="64" autocomplete="off" spellcheck="false" aria-describedby="device-help"></div>
+          </div>
+          <pre class="code" aria-label="Python example" data-i18n-aria-label="console.codeExample"><code><span class="kw">import</span> httpx, json, os, socket, uuid
+
+visitor = uuid.uuid5(uuid.NAMESPACE_DNS, socket.gethostname()).hex
+
+reading = httpx.<span class="fn">post</span>(
+  <span class="str">"https://modelmarket.dev/ai-market/v2/invoke"</span>,
+  headers={<span class="str">"X-AIMarket-Sandbox-Visitor"</span>: visitor},
+  json={<span class="str">"product_id"</span>: <span class="str">"gaia.gateway"</span>,
+        <span class="str">"capability_id"</span>: <span class="str">"gaia.weather.read@v1"</span>,
+        <span class="str">"source_hub"</span>: <span class="str">"https://iot.modelmarket.dev"</span>,
+        <span class="str">"input"</span>: {<span class="str">"device_id"</span>: <span class="str dynamic-device">"om-wx-01"</span>}},
+).<span class="fn">json</span>()
+verify_task = <span class="str">"Assess this GAIA output. End with VERDICT: plausible or implausible. "</span> + json.dumps(reading.get(<span class="str">"output"</span>))
+verdict = httpx.<span class="fn">post</span>(<span class="str">"https://metis.modelmarket.dev/v1/verify"</span>,
+  headers={<span class="str">"Authorization"</span>: <span class="str">f"Bearer {os.environ['METIS_API_KEY']}"</span>},
+  json={<span class="str">"input"</span>: verify_task, <span class="str">"route"</span>: <span class="str">"fast"</span>}).<span class="fn">json</span>()
+<span class="fn">print</span>(reading[<span class="str">"receipt"</span>], verdict)</code></pre>
+          <button id="run" class="run-button" type="button"><span data-i18n="console.run">Run real invoke</span><i aria-hidden="true">→</i></button>
+          <p id="device-help" class="safety-note"><i>◆</i> <span data-i18n="console.safety">Executes one allow-listed workflow. The browser never receives infrastructure secrets.</span></p>
+        </article>
+
+        <article class="console result-console" aria-live="polite">
+          <header class="console-head"><div class="result-title"><i></i><span data-i18n="trace.title">NETWORK TRACE</span></div><b id="elapsed">— MS</b></header>
+          <div class="trace" id="trace">
+            <div class="trace-step" data-step="gaia"><span>01</span><i></i><div><strong data-i18n="step.gaia.title">Invoke GAIA</strong><small data-i18n="step.gaia.waiting">Waiting for a device reading</small></div><b data-i18n="step.wait">WAIT</b></div>
+            <div class="trace-step" data-step="metis"><span>02</span><i></i><div><strong data-i18n="step.metis.title">Verify with Metis</strong><small data-i18n="step.metis.waiting">Confidence gate has not started</small></div><b data-i18n="step.wait">WAIT</b></div>
+            <div class="trace-step" data-step="receipt"><span>03</span><i></i><div><strong data-i18n="step.receipt.title">Inspect Hub receipt</strong><small data-i18n="step.receipt.waiting">No receipt received yet</small></div><b data-i18n="step.wait">WAIT</b></div>
+          </div>
+          <div id="empty-state" class="empty-state"><div class="radar" aria-hidden="true"><i></i></div><strong data-i18n="empty.title">Ready for first contact</strong><p data-i18n="empty.body">Press Run. The result below will come from live services, not a canned animation.</p></div>
+          <div id="result-panel" class="result-panel" hidden>
+            <div class="metric-grid">
+              <div><span data-i18n="metric.capability">CAPABILITY</span><strong id="metric-capability">—</strong></div>
+              <div><span data-i18n="metric.score">VERIFY SCORE</span><strong id="metric-score">—</strong></div>
+              <div><span data-i18n="metric.receipt">RECEIPT</span><strong id="metric-receipt">—</strong></div>
+            </div>
+            <div id="assessment-card" class="assessment-card" hidden>
+              <span data-i18n="metric.assessment">METIS ASSESSMENT</span>
+              <p id="assessment"></p>
+            </div>
+            <details><summary><span data-i18n="result.raw">Raw response</span> <span>JSON</span></summary><pre id="result"></pre></details>
+            <div class="result-actions"><a id="monitor-link" href="#" target="_blank" rel="noopener"><span data-i18n="result.monitor">Open Alien Monitor</span> <span>↗</span></a><button id="copy-result" type="button" data-i18n="result.copy">Copy JSON</button></div>
+          </div>
+          <div id="error-panel" class="error-panel" hidden><span>!</span><div><strong data-i18n="error.title">Run did not complete</strong><p id="error-message"></p></div><button id="retry" type="button" data-i18n="error.retry">Retry</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="next-step" aria-labelledby="next-title">
+      <div><p class="section-label" data-i18n="next.label">From proof to product</p><h2 id="next-title" data-i18n="next.title">Take the same path home.</h2><p data-i18n="next.body">The Playground proves the rails. The CLI creates a repository you own, test, and publish deliberately.</p></div>
+      <div class="command-card">
+        <header><span data-i18n="command.status">CLI PACKAGE · NOT PUBLISHED</span><button id="copy-command" type="button" disabled aria-disabled="true" data-i18n="command.unavailable">Unavailable</button></header>
+        <p class="command-stage" data-i18n="command.release">Command after the PyPI release</p>
+        <code>uvx create-aimarket-agent my-agent --kind data-provider --metis</code>
+        <div class="command-notice" role="note"><strong data-i18n="command.why">Why this command fails today</strong><p data-i18n="command.pending">uvx searches PyPI by default. create-aimarket-agent has not been published there yet.</p></div>
+        <div class="command-source"><span data-i18n="command.source">Works now for maintainers from this source checkout</span><code>cd create-aimarket-agent &amp;&amp; uv run create-aimarket-agent my-agent --kind data-provider --metis</code></div>
+      </div>
+    </section>
+  </main>
+
+  <footer><a class="brand" href="/"><span>AI</span>Market</a><p><span data-i18n="footer.explore">Explore possibilities in the</span> <a href="https://use.modelmarket.dev/" rel="noopener">Use Cases Portal</a>. <span data-i18n="footer.prove">Prove the rails here.</span></p><span data-i18n="footer.protocol">Protocol v2 · bounded public sandbox</span></footer>
+</body>
+</html>
