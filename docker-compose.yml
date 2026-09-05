@@ -1,0 +1,34 @@
+services:
+  playground:
+    build: .
+    ports: ["127.0.0.1:8075:8075"]
+    environment:
+      PLAYGROUND_HUB_URL: ${PLAYGROUND_HUB_URL:-https://modelmarket.dev}
+      PLAYGROUND_METIS_URL: ${PLAYGROUND_METIS_URL:-https://metis.modelmarket.dev}
+      PLAYGROUND_GAIA_URL: ${PLAYGROUND_GAIA_URL:-https://iot.modelmarket.dev}
+      PLAYGROUND_METIS_KEY: ${PLAYGROUND_METIS_KEY:-}
+      PLAYGROUND_MONITOR_URL: ${PLAYGROUND_MONITOR_URL:-https://monitor.modelmarket.dev/}
+      PLAYGROUND_EVENT_URL: ${PLAYGROUND_EVENT_URL:-}
+      PLAYGROUND_EVENT_TOKEN: ${PLAYGROUND_EVENT_TOKEN:-}
+      PLAYGROUND_MAX_RUNS_PER_HOUR: ${PLAYGROUND_MAX_RUNS_PER_HOUR:-5}
+      PLAYGROUND_MAX_RUNS_PER_SOURCE_PER_HOUR: ${PLAYGROUND_MAX_RUNS_PER_SOURCE_PER_HOUR:-25}
+      PLAYGROUND_MAX_GLOBAL_RUNS_PER_HOUR: ${PLAYGROUND_MAX_GLOBAL_RUNS_PER_HOUR:-500}
+      PLAYGROUND_MAX_CONCURRENCY: ${PLAYGROUND_MAX_CONCURRENCY:-8}
+      PLAYGROUND_RUN_TIMEOUT_S: ${PLAYGROUND_RUN_TIMEOUT_S:-640}
+      PLAYGROUND_METIS_TIMEOUT_S: ${PLAYGROUND_METIS_TIMEOUT_S:-620}
+      PLAYGROUND_METIS_ROUTE: ${PLAYGROUND_METIS_ROUTE:-fast}
+      PLAYGROUND_MAX_RESPONSE_BYTES: ${PLAYGROUND_MAX_RESPONSE_BYTES:-262144}
+      PLAYGROUND_MAX_STORED_RUNS: ${PLAYGROUND_MAX_STORED_RUNS:-100}
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    pids_limit: 128
+    init: true
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8075/health', timeout=3).read()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
