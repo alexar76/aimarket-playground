@@ -9,5 +9,5 @@
     "discover": "npm run build && node dist/cli.js",
     "invoke": "npm run build && node dist/cli.js --invoke"
   },
-  "devDependencies": {"@types/node": "^22.10.2", "typescript": "^5.7.2"}
+  "devDependencies": {"@types/node": "^26.6.4", "typescript": "^5.7.2"}
 }
