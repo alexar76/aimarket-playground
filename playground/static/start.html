@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060914">
+  <title>AIMarket | Developer workspace</title>
+  <link rel="stylesheet" href="/assets/playground.css?v=20260820f">
+  <link rel="stylesheet" href="/assets/start.css?v=20261007a">
+  <script src="/assets/i18n.js?v=20261007b" defer></script>
+  <script src="/assets/start.js?v=20261007b" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#starter" data-i18n="a11y.skip">Skip to playground</a>
+  <div class="scene" aria-hidden="true"><div class="scene-grid"></div><i class="noise"></i></div>
+  <header class="nav start-nav">
+    <a class="brand" href="/" data-local-link data-i18n-aria-label="a11y.home"><span>AI</span>Market <b>Playground</b></a>
+    <nav data-i18n-aria-label="nav.primary" aria-label="Primary navigation">
+      <a href="/connect" data-local-link data-i18n="nav.connect">Connect provider</a>
+      <a href="https://modelmarket.dev/developers" data-language-link data-i18n="nav.hub">Hub</a>
+    </nav>
+    <div class="language-switcher" data-i18n-aria-label="nav.language" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="es" aria-pressed="false">ES</button><button type="button" data-lang="fr" aria-pressed="false">FR</button><button type="button" data-lang="zh" aria-pressed="false">中文</button>
+    </div>
+  </header>
+  <main class="start-main">
+    <section id="starter" class="workspace" aria-labelledby="start-title">
+      <header class="workspace-head">
+        <div><p class="section-label">AIMarket / Protocol v2</p><h1 id="start-title" data-i18n="start.title">Developer workspace</h1></div>
+      </header>
+      <div class="start-toolbar">
+        <fieldset><legend data-i18n="start.role">Role</legend><div class="segments"><button type="button" data-role="provider" aria-pressed="true" data-i18n="start.provider">Provider</button><button type="button" data-role="consumer" aria-pressed="false" data-i18n="start.consumer">Consumer</button></div></fieldset>
+        <fieldset><legend data-i18n="start.stack">Stack</legend><div class="segments"><button type="button" data-stack="python" aria-pressed="true">Python</button><button type="button" data-stack="typescript" aria-pressed="false">TypeScript</button></div></fieldset>
+      </div>
+      <div class="workspace-grid start-grid">
+        <aside class="console input-console">
+          <header class="console-head"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><span id="kit-name">provider / python</span><b>ZIP</b></header>
+          <div class="kit-overview">
+            <h2 id="role-title">Provider</h2><p id="role-summary"></p>
+            <dl><dt data-i18n="start.requirements">Requirements</dt><dd id="requirements"></dd></dl>
+            <button id="download" type="button" class="run-button" disabled><span data-i18n="start.download">Download project</span><span aria-hidden="true">↓</span></button>
+            <p id="download-status" role="status" aria-live="polite"></p>
+            <p id="load-status" role="status" data-i18n="start.loading">Loading project…</p>
+            <details><summary data-i18n="start.contents">Project files</summary><ul id="kit-files"></ul></details>
+            <details><summary>SHA-256</summary><code id="checksum"></code></details>
+            <p class="snapshot" data-i18n="start.snapshot"></p>
+          </div>
+        </aside>
+        <div class="console steps-console" id="steps">
+          <section class="start-step" data-step="1"><header><span>01</span><h2></h2></header><p></p><div class="command-card"><header><span data-i18n="command.local">LOCAL TERMINAL</span><button type="button" class="copy-command" data-copy-step="0" data-i18n-aria-label="start.copy" aria-label="Copy commands" title="Copy commands"><img src="/assets/copy.svg" width="18" height="18" alt=""></button></header><pre><code></code></pre></div></section>
+          <section class="start-step" data-step="2"><header><span>02</span><h2></h2></header><p></p><div class="command-card"><header><span data-i18n="command.local">LOCAL TERMINAL</span><button type="button" class="copy-command" data-copy-step="1" data-i18n-aria-label="start.copy" aria-label="Copy commands" title="Copy commands"><img src="/assets/copy.svg" width="18" height="18" alt=""></button></header><pre><code></code></pre></div></section>
+          <section class="start-step" data-step="3"><header><span>03</span><h2></h2></header><p></p><div class="command-card"><header><span data-i18n="command.local">LOCAL TERMINAL</span><button type="button" class="copy-command" data-copy-step="2" data-i18n-aria-label="start.copy" aria-label="Copy commands" title="Copy commands"><img src="/assets/copy.svg" width="18" height="18" alt=""></button></header><pre><code></code></pre></div></section>
+          <p id="copy-status" role="status" aria-live="polite"></p>
+          <div class="start-actions"><a id="next-link" href="/connect"></a><a href="/connect/guide" data-local-link data-i18n="start.guide">Invoke profile</a></div>
+        </div>
+      </div>
+    </section>
+    <section class="start-after"><p class="section-label">04 / AIMarket</p><h2 id="after-title"></h2><p id="after-note"></p><a id="after-link" href="/publish">Registration checklist</a><p class="scope" id="scope"></p></section>
+  </main>
+  <footer><span>AIMarket Protocol v2</span><span data-i18n="start.safety">Keys stay local. Publication and invocation are explicit actions.</span></footer>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060914">
+  <title>AIMarket | Provider setup guide</title>
+  <link rel="stylesheet" href="/assets/playground.css?v=20260820f">
+  <link rel="stylesheet" href="/assets/connect.css?v=20261006b">
+  <link rel="stylesheet" href="/assets/provider-guide.css?v=20261006b">
+  <script src="/assets/i18n.js?v=20261007a" defer></script>
+  <script src="/assets/provider-guide.js?v=20261006a" defer></script>
+</head>
+<body>
+  <div class="scene" aria-hidden="true"><div class="scene-grid"></div><i class="noise"></i></div>
+  <header class="nav onboarding-nav">
+    <a class="brand" href="/" data-i18n-aria-label="a11y.home"><span>AI</span>Market <b>Playground</b></a>
+    <nav aria-label="Navigation" data-i18n-aria-label="nav.primary"><a id="connect-link" href="/connect" data-i18n="nav.connect">Connect provider</a><a href="/start" data-i18n="nav.start">Developers</a></nav>
+    <div class="language-switcher" aria-label="Language" data-i18n-aria-label="nav.language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="es" aria-pressed="false">ES</button><button type="button" data-lang="fr" aria-pressed="false">FR</button><button type="button" data-lang="zh" aria-pressed="false">中文</button>
+    </div>
+  </header>
+  <main class="guide">
+    <article lang="en" id="guide-en">
+      <p><a href="/connect?lang=en">Back to provider connection</a></p>
+      <p class="eyebrow">AIMARKET-PROVIDER-INVOKE/1</p>
+      <h1>Provider setup guide</h1>
+      <p>Check your own endpoint with one real invocation and a request-bound Ed25519 signature. The check does not require a Hub token, stake, account or payment channel.</p>
+      <h2>1. Prepare a test provider</h2>
+      <p>Use harmless input and a test deployment: your provider's own execution can cost money or have side effects. The header <code>X-AIMarket-Test-Mode: provider-invoke-v1</code> identifies the check, but does not authorize the caller or make a call free.</p>
+      <p>Configure <code>capability.json</code> with <code>product_id</code>, <code>capability_id</code>, <code>publisher_id</code>, <code>name</code>, <code>invoke_url</code>, <code>provider_pubkey</code>, <code>price_per_call_usd</code>, <code>input_schema</code> and <code>output_schema</code>. The public URL must use HTTPS on port 443; the key must be a base64-encoded 32-byte Ed25519 public key.</p>
+      <h2>2. Confirm endpoint control</h2>
+      <ol><li>Open <a href="/connect?lang=en">Connect your provider</a>, import the manifest and enter a JSON test input matching its schema.</li><li>Authorize the test call and select <strong>Prepare connection</strong>.</li><li>Download the proof and serve that JSON at the displayed address on your provider's origin:</li></ol>
+      <div class="command-card"><header><span>.well-known/aimarket-provider-check.json</span><span>JSON</span></header><pre><code>https://your-provider.example/.well-known/aimarket-provider-check.json
+
+{"challenge":"&lt;64-character token issued by Playground&gt;"}</code></pre></div>
+      <p>Serve the response as <code>application/json</code> without compression or redirects. The challenge is bound to this browser session, manifest and input; it expires after 15 minutes. There are up to three ownership attempts.</p>
+      <p>Providers generated from the updated Python or TypeScript templates expose this route when <code>AIMARKET_ONBOARDING_CHALLENGE</code> contains the issued token. Set the variable and restart the provider; remove it after checking. Older or custom providers can serve the proof as a static JSON file at the same address.</p>
+      <h2>3. Run the check</h2>
+      <p>Select <strong>Verify &amp; invoke</strong>. Playground verifies the proof, makes one POST, checks the output schema and verifies <code>X-Provider-Signature</code>. Download the report with the signed envelope and public key.</p>
+      <p>A repeated request with the same challenge retrieves the cached result, including failures after dispatch. It does not invoke again. A new challenge authorizes a new call. Reports expire after 15 minutes and are lost on server restart.</p>
+      <h2>Local checks and CI</h2>
+      <p>The CLI is available from the updated Playground source checkout. Do not assume this new command is already published on PyPI. Create a JSON input file such as <code>{}</code> for an unchanged generated provider, start the provider, then run:</p>
+      <div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><pre><code>cd aimarket-playground
+uv sync --extra dev
+uv run aimarket-provider-check ../my-agent/capability.json \
+  --input ../my-agent/test-input.json --allow-loopback &gt; report.json</code></pre></div>
+      <p>Exit code 0 means pass; 1 means failure. Archive the report even on failure. The CLI performs the same invoke, schema and signature checks; it does not claim endpoint ownership. <code>--allow-loopback</code> permits local development only, not arbitrary private networks. Reports contain provider results: use non-sensitive fixtures.</p>
+      <h2>The signature contract</h2>
+      <div class="command-card"><header><span>Ed25519</span><span>JSON</span></header><pre><code>{
+  "capability_id": "my-agent.invoke@v1",
+  "product_id": "my-agent",
+  "input_sha256": "&lt;SHA-256 of canonical input JSON&gt;",
+  "result": {}
+}</code></pre></div>
+      <p>Canonical JSON uses sorted keys, compact separators and UTF-8 with unescaped Unicode. The provider signs these bytes with Ed25519. For Python/TypeScript interoperability, use integers in signed data: the existing contract does not normalize <code>1.0</code> and <code>1</code> across languages.</p>
+      <h2>Limits and scope</h2>
+      <p>JSON is limited to 64 KiB, depth 16 and 4096 nodes. Duplicate keys, non-finite numbers, malformed UTF-8, private network destinations, redirects and compressed responses are rejected. Proof and invoke use the same validated IP and TLS hostname.</p>
+      <p>Supported JSON Schema 2020-12 keywords:</p>
+      <p class="keywords"><code>$schema</code> <code>title</code> <code>description</code> <code>type</code> <code>properties</code> <code>required</code> <code>additionalProperties</code> <code>items</code> <code>enum</code> <code>const</code> <code>minimum</code> <code>maximum</code> <code>exclusiveMinimum</code> <code>exclusiveMaximum</code> <code>minLength</code> <code>maxLength</code> <code>minItems</code> <code>maxItems</code> <code>minProperties</code> <code>maxProperties</code></p>
+      <p>Other keywords, including references, regular expressions and schema composition, fail explicitly. The service allows four concurrent checks and up to 250 stored challenges. Hourly limits shared by preparation and uncached attempts: 20 per visitor, 60 per source IP and 500 per process. Deployment uses one ASGI worker, with rate limiting and trusted proxy configuration at the edge.</p>
+      <p class="scope"><strong>A pass applies to one provider invocation.</strong> This is not whole-protocol certification, Hub publication or proof of provider identity. Hub receipts, payments, discovery, federation, replay detection and load are not tested. The report itself is not signed by the Hub; its timestamp is not attested by the provider. Identical inputs and results can produce identical signatures, so freshness is not proven.</p>
+      <p><a href="/connect?lang=en">Connect your provider</a></p>
+    </article>
+    <article lang="ru" id="guide-ru" hidden>
+      <p><a href="/connect?lang=ru">Вернуться к подключению поставщика</a></p>
+      <p class="eyebrow">AIMARKET-PROVIDER-INVOKE/1</p>
+      <h1>Подключение поставщика</h1>
+      <p>Проверка собственного эндпоинта: один реальный вызов и верификация Ed25519-подписи, привязанной к запросу. Токен оператора Hub, залог, аккаунт и платёжный канал не нужны.</p>
+      <h2>1. Подготовить тестовый сервис</h2>
+      <p>Используйте безопасные тестовые данные и тестовое развёртывание: выполнение на вашем сервисе может стоить денег или иметь побочные эффекты. Заголовок <code>X-AIMarket-Test-Mode: provider-invoke-v1</code> обозначает проверку, но не авторизует клиента и не делает вызов бесплатным.</p>
+      <p>Заполните <code>capability.json</code>: <code>product_id</code>, <code>capability_id</code>, <code>publisher_id</code>, <code>name</code>, <code>invoke_url</code>, <code>provider_pubkey</code>, <code>price_per_call_usd</code>, <code>input_schema</code>, <code>output_schema</code>. Публичный адрес должен использовать HTTPS на порту 443. Ключ — 32 байта публичного ключа Ed25519 в base64.</p>
+      <h2>2. Подтвердить контроль эндпоинта</h2>
+      <ol><li>Откройте <a href="/connect?lang=ru">подключение поставщика</a>, импортируйте манифест и введите JSON с тестовыми данными, соответствующими входной схеме.</li><li>Разрешите тестовый вызов и нажмите <strong>Подготовить подключение</strong>.</li><li>Скачайте подтверждение и разместите JSON по показанному адресу на домене вашего поставщика:</li></ol>
+      <div class="command-card"><header><span>.well-known/aimarket-provider-check.json</span><span>JSON</span></header><pre><code>https://your-provider.example/.well-known/aimarket-provider-check.json
+
+{"challenge":"&lt;токен из 64 символов, выданный Playground&gt;"}</code></pre></div>
+      <p>Ответ должен иметь тип <code>application/json</code>, без сжатия и перенаправлений. Подтверждение привязано к сессии браузера, манифесту и входным данным, действует 15 минут. Допускаются три попытки проверки контроля эндпоинта.</p>
+      <p>Поставщики из обновлённых шаблонов Python и TypeScript отдают подтверждение, когда в переменной <code>AIMARKET_ONBOARDING_CHALLENGE</code> указан выданный токен. Задайте переменную и перезапустите сервис; после проверки удалите её. Для старого или собственного поставщика можно отдать скачанный JSON как статический файл по тому же адресу.</p>
+      <h2>3. Выполнить проверку</h2>
+      <p>Нажмите <strong>Проверить и вызвать</strong>. Playground проверит подтверждение, отправит один POST, проверит схему результата и подпись <code>X-Provider-Signature</code>. Скачайте отчёт с подписанными данными и публичным ключом.</p>
+      <p>Повторный запрос с тем же подтверждением возвращает сохранённый результат, включая ошибки после отправки вызова. Новый вызов не выполняется. Новое подтверждение разрешает новый вызов. Отчёты хранятся 15 минут и теряются при перезапуске сервера.</p>
+      <h2>Локально и в CI</h2>
+      <p>CLI доступен из обновлённой копии исходников Playground. Не следует считать, что новая команда уже опубликована на PyPI. Создайте файл тестового ввода, например <code>{}</code> для неизменённого сгенерированного поставщика, запустите сервис и выполните:</p>
+      <div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><pre><code>cd aimarket-playground
+uv sync --extra dev
+uv run aimarket-provider-check ../my-agent/capability.json \
+  --input ../my-agent/test-input.json --allow-loopback &gt; report.json</code></pre></div>
+      <p>Код выхода 0 означает успех, 1 — ошибку. Сохраняйте отчёт и при ошибке. CLI выполняет те же проверки вызова, схем и подписи; контроль эндпоинта он не подтверждает. Флаг <code>--allow-loopback</code> разрешает локальную разработку, но не произвольные приватные сети. Отчёт содержит результаты сервиса: используйте данные без секретов.</p>
+      <h2>Контракт подписи</h2>
+      <div class="command-card"><header><span>Ed25519</span><span>JSON</span></header><pre><code>{
+  "capability_id": "my-agent.invoke@v1",
+  "product_id": "my-agent",
+  "input_sha256": "&lt;SHA-256 канонического JSON входных данных&gt;",
+  "result": {}
+}</code></pre></div>
+      <p>Канонический JSON использует отсортированные ключи, компактные разделители и UTF-8 с неэкранированным Unicode. Поставщик подписывает эти байты ключом Ed25519. Для совместимости Python и TypeScript используйте целые числа в подписанных данных: текущий контракт не нормализует представления <code>1.0</code> и <code>1</code> между языками.</p>
+      <h2>Ограничения и область проверки</h2>
+      <p>Размер JSON — до 64 КиБ, глубина — до 16, число узлов — до 4096. Дубли ключей, неконечные числа, некорректный UTF-8, приватные сетевые адреса, перенаправления и сжатые ответы отклоняются. Подтверждение и вызов используют один проверенный IP и исходное имя хоста для TLS.</p>
+      <p>Поддерживаемые ключевые слова JSON Schema 2020-12:</p>
+      <p class="keywords"><code>$schema</code> <code>title</code> <code>description</code> <code>type</code> <code>properties</code> <code>required</code> <code>additionalProperties</code> <code>items</code> <code>enum</code> <code>const</code> <code>minimum</code> <code>maximum</code> <code>exclusiveMinimum</code> <code>exclusiveMaximum</code> <code>minLength</code> <code>maxLength</code> <code>minItems</code> <code>maxItems</code> <code>minProperties</code> <code>maxProperties</code></p>
+      <p>Остальные ключевые слова, включая ссылки, регулярные выражения и композицию схем, отклоняются явно. Лимиты сервиса: четыре одновременные проверки и до 250 сохранённых подтверждений. Общие часовые лимиты подготовки и несохранённых попыток: 20 на посетителя, 60 на исходный IP и 500 на процесс. Развёртывание использует один ASGI worker, ограничения запросов и настройку доверенного прокси.</p>
+      <p class="scope"><strong>Успех относится к одному вызову поставщика.</strong> Это не сертификация всего протокола, публикация в Hub или подтверждение личности поставщика. Квитанции Hub, платежи, обнаружение, федерация, защита от повторов и нагрузка не проверяются. Сам отчёт не подписан Hub; его время не заверено поставщиком. Одинаковые вход и результат могут иметь одинаковую подпись, поэтому свежесть ответа не доказана.</p>
+      <p><a href="/connect?lang=ru">Подключить поставщика</a></p>
+    </article>
+    <article lang="es" id="guide-es" hidden>
+      <p><a href="/connect?lang=es">Volver a la conexión del proveedor</a></p>
+      <p class="eyebrow">AIMARKET-PROVIDER-INVOKE/1</p>
+      <h1>Guía de conexión del proveedor</h1>
+      <p>Comprueba tu endpoint con una invocación real y la verificación de una firma Ed25519 vinculada a la solicitud. No necesitas un token de Hub, garantía, cuenta ni canal de pago.</p>
+      <h2>1. Prepara un proveedor de prueba</h2>
+      <p>Usa datos inocuos y un despliegue de prueba: la ejecución de tu servicio puede generar costes o efectos secundarios. La cabecera <code>X-AIMarket-Test-Mode: provider-invoke-v1</code> identifica la prueba, pero no autoriza al cliente ni hace gratuita la llamada.</p>
+      <p>Configura <code>capability.json</code> con <code>product_id</code>, <code>capability_id</code>, <code>publisher_id</code>, <code>name</code>, <code>invoke_url</code>, <code>provider_pubkey</code>, <code>price_per_call_usd</code>, <code>input_schema</code> y <code>output_schema</code>. La URL pública debe usar HTTPS en el puerto 443; la clave pública Ed25519 debe tener 32 bytes, codificados en base64.</p>
+      <h2>2. Confirma el control del endpoint</h2>
+      <ol><li>Abre <a href="/connect?lang=es">Conecta tu proveedor</a>, importa el manifiesto e introduce una entrada JSON de prueba que cumpla su esquema.</li><li>Autoriza la llamada y selecciona <strong>Preparar conexión</strong>.</li><li>Descarga la prueba y publica el JSON en la dirección indicada, en el mismo origen que tu proveedor:</li></ol>
+      <div class="command-card"><header><span>.well-known/aimarket-provider-check.json</span><span>JSON</span></header><pre><code>https://your-provider.example/.well-known/aimarket-provider-check.json
+
+{"challenge":"&lt;token de 64 caracteres emitido por Playground&gt;"}</code></pre></div>
+      <p>Sirve la respuesta como <code>application/json</code>, sin compresión ni redirecciones. El desafío está vinculado a esta sesión del navegador, al manifiesto y a la entrada; caduca en 15 minutos. Se permiten hasta tres intentos de verificar el control.</p>
+      <p>Los proveedores generados con las plantillas actualizadas de Python o TypeScript exponen esta ruta cuando <code>AIMARKET_ONBOARDING_CHALLENGE</code> contiene el token emitido. Define la variable y reinicia el proveedor; elimínala tras la prueba. Los proveedores antiguos o personalizados pueden servir el JSON como archivo estático en la misma dirección.</p>
+      <h2>3. Ejecuta la prueba</h2>
+      <p>Selecciona <strong>Verificar e invocar</strong>. Playground verifica la prueba, realiza un único POST, comprueba el esquema de salida y verifica <code>X-Provider-Signature</code>. Descarga el informe con los datos firmados y la clave pública.</p>
+      <p>Repetir la solicitud con el mismo desafío devuelve el resultado almacenado, incluidos los fallos posteriores al envío, sin otra invocación. Un desafío nuevo autoriza otra llamada. Los informes caducan en 15 minutos y se pierden al reiniciar el servidor.</p>
+      <h2>Pruebas locales y CI</h2>
+      <p>El CLI está disponible en la copia actualizada del código fuente de Playground. No des por hecho que este nuevo comando ya esté publicado en PyPI. Crea un archivo JSON de entrada, por ejemplo <code>{}</code> para un proveedor generado sin modificaciones, inicia el proveedor y ejecuta:</p>
+      <div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><pre><code>cd aimarket-playground
+uv sync --extra dev
+uv run aimarket-provider-check ../my-agent/capability.json \
+  --input ../my-agent/test-input.json --allow-loopback &gt; report.json</code></pre></div>
+      <p>El código de salida 0 indica éxito; 1 indica fallo. Conserva el informe también cuando falle. El CLI realiza las mismas comprobaciones de invocación, esquema y firma; no acredita el control del endpoint. <code>--allow-loopback</code> permite el desarrollo local, no redes privadas arbitrarias. Los informes contienen resultados del proveedor: usa datos de prueba sin información sensible.</p>
+      <h2>El contrato de firma</h2>
+      <div class="command-card"><header><span>Ed25519</span><span>JSON</span></header><pre><code>{
+  "capability_id": "my-agent.invoke@v1",
+  "product_id": "my-agent",
+  "input_sha256": "&lt;SHA-256 del JSON canónico de entrada&gt;",
+  "result": {}
+}</code></pre></div>
+      <p>El JSON canónico usa claves ordenadas, separadores compactos y UTF-8 con Unicode sin escapar. El proveedor firma esos bytes con Ed25519. Para la interoperabilidad entre Python y TypeScript, usa enteros en los datos firmados: el contrato actual no normaliza <code>1.0</code> y <code>1</code> entre lenguajes.</p>
+      <h2>Límites y alcance</h2>
+      <p>El JSON está limitado a 64 KiB, una profundidad de 16 y 4096 nodos. Se rechazan claves duplicadas, números no finitos, UTF-8 incorrecto, destinos de redes privadas, redirecciones y respuestas comprimidas. La prueba y la invocación usan la misma IP validada y el mismo nombre de host TLS.</p>
+      <p>Palabras clave admitidas de JSON Schema 2020-12:</p>
+      <p class="keywords"><code>$schema</code> <code>title</code> <code>description</code> <code>type</code> <code>properties</code> <code>required</code> <code>additionalProperties</code> <code>items</code> <code>enum</code> <code>const</code> <code>minimum</code> <code>maximum</code> <code>exclusiveMinimum</code> <code>exclusiveMaximum</code> <code>minLength</code> <code>maxLength</code> <code>minItems</code> <code>maxItems</code> <code>minProperties</code> <code>maxProperties</code></p>
+      <p>Las demás palabras clave, incluidas referencias, expresiones regulares y composición de esquemas, se rechazan explícitamente. El servicio admite cuatro pruebas simultáneas y hasta 250 desafíos almacenados. Límites por hora compartidos entre preparación e intentos sin resultado en caché: 20 por visitante, 60 por IP de origen y 500 por proceso. El despliegue usa un único proceso de trabajo ASGI, con limitación de solicitudes y configuración de proxy de confianza en el perímetro.</p>
+      <p class="scope"><strong>Un resultado aprobado corresponde a una sola invocación del proveedor.</strong> No es una certificación del protocolo completo, una publicación en Hub ni una prueba de identidad del proveedor. No se prueban los recibos Hub, pagos, descubrimiento, federación, detección de repeticiones ni carga. Hub no firma el informe y el proveedor no certifica su marca de tiempo. Entradas y resultados idénticos pueden producir firmas idénticas: no se demuestra que la respuesta sea reciente.</p>
+      <p><a href="/connect?lang=es">Conecta tu proveedor</a></p>
+    </article>
+    <article lang="fr" id="guide-fr" hidden>
+      <p><a href="/connect?lang=fr">Retour à la connexion du fournisseur</a></p>
+      <p class="eyebrow">AIMARKET-PROVIDER-INVOKE/1</p>
+      <h1>Guide de connexion du fournisseur</h1>
+      <p>Testez votre point de terminaison (endpoint) avec une invocation réelle et la vérification d’une signature Ed25519 liée à la requête. Aucun jeton Hub, dépôt de garantie, compte ou canal de paiement n’est nécessaire.</p>
+      <h2>1. Préparer un fournisseur de test</h2>
+      <p>Utilisez des données sans danger et un déploiement de test : l’exécution de votre service peut entraîner des frais ou des effets secondaires. L’en-tête <code>X-AIMarket-Test-Mode: provider-invoke-v1</code> identifie le test, mais n’autorise pas le client et ne rend pas l’appel gratuit.</p>
+      <p>Renseignez <code>capability.json</code> avec <code>product_id</code>, <code>capability_id</code>, <code>publisher_id</code>, <code>name</code>, <code>invoke_url</code>, <code>provider_pubkey</code>, <code>price_per_call_usd</code>, <code>input_schema</code> et <code>output_schema</code>. L’URL publique doit utiliser HTTPS sur le port 443 ; la clé publique Ed25519 doit contenir 32 octets, encodés en base64.</p>
+      <h2>2. Confirmer le contrôle du point de terminaison</h2>
+      <ol><li>Ouvrez <a href="/connect?lang=fr">Connecter votre fournisseur</a>, importez le manifeste et saisissez une entrée JSON de test conforme à son schéma.</li><li>Autorisez l’appel et sélectionnez <strong>Préparer la connexion</strong>.</li><li>Téléchargez la preuve et servez ce JSON à l’adresse indiquée, sur la même origine que votre fournisseur :</li></ol>
+      <div class="command-card"><header><span>.well-known/aimarket-provider-check.json</span><span>JSON</span></header><pre><code>https://your-provider.example/.well-known/aimarket-provider-check.json
+
+{"challenge":"&lt;jeton de 64 caractères émis par Playground&gt;"}</code></pre></div>
+      <p>Servez la réponse en <code>application/json</code>, sans compression ni redirection. Le défi est lié à cette session du navigateur, au manifeste et à l’entrée ; il expire après 15 minutes. Jusqu’à trois tentatives de vérification du contrôle sont autorisées.</p>
+      <p>Les fournisseurs générés avec les modèles Python ou TypeScript mis à jour exposent cette route lorsque <code>AIMARKET_ONBOARDING_CHALLENGE</code> contient le jeton émis. Définissez la variable et redémarrez le fournisseur ; supprimez-la après le test. Les fournisseurs anciens ou personnalisés peuvent servir la preuve comme fichier JSON statique à la même adresse.</p>
+      <h2>3. Lancer le test</h2>
+      <p>Sélectionnez <strong>Vérifier et invoquer</strong>. Playground vérifie la preuve, effectue un seul POST, contrôle le schéma de sortie et vérifie <code>X-Provider-Signature</code>. Téléchargez le rapport contenant les données signées et la clé publique.</p>
+      <p>Une requête répétée avec le même défi renvoie le résultat en cache, y compris les échecs après envoi, sans nouvelle invocation. Un nouveau défi autorise un nouvel appel. Les rapports expirent après 15 minutes et sont perdus au redémarrage du serveur.</p>
+      <h2>Tests locaux et CI</h2>
+      <p>Le CLI est disponible dans la copie à jour du code source de Playground. Ne supposez pas que cette nouvelle commande soit déjà publiée sur PyPI. Créez un fichier JSON d’entrée, par exemple <code>{}</code> pour un fournisseur généré sans modification, démarrez le fournisseur, puis exécutez :</p>
+      <div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><pre><code>cd aimarket-playground
+uv sync --extra dev
+uv run aimarket-provider-check ../my-agent/capability.json \
+  --input ../my-agent/test-input.json --allow-loopback &gt; report.json</code></pre></div>
+      <p>Le code de sortie 0 indique un succès ; 1 indique un échec. Archivez le rapport même en cas d’échec. Le CLI effectue les mêmes vérifications d’invocation, de schéma et de signature ; il ne prouve pas le contrôle du point de terminaison. <code>--allow-loopback</code> autorise le développement local, pas des réseaux privés arbitraires. Les rapports contiennent les résultats du fournisseur : utilisez des données de test non sensibles.</p>
+      <h2>Le contrat de signature</h2>
+      <div class="command-card"><header><span>Ed25519</span><span>JSON</span></header><pre><code>{
+  "capability_id": "my-agent.invoke@v1",
+  "product_id": "my-agent",
+  "input_sha256": "&lt;SHA-256 du JSON canonique d’entrée&gt;",
+  "result": {}
+}</code></pre></div>
+      <p>Le JSON canonique utilise des clés triées, des séparateurs compacts et UTF-8 avec Unicode non échappé. Le fournisseur signe ces octets avec Ed25519. Pour l’interopérabilité Python/TypeScript, utilisez des entiers dans les données signées : le contrat actuel ne normalise pas <code>1.0</code> et <code>1</code> entre les langages.</p>
+      <h2>Limites et périmètre</h2>
+      <p>Le JSON est limité à 64 KiB, une profondeur de 16 et 4096 nœuds. Les clés dupliquées, nombres non finis, UTF-8 incorrect, destinations de réseaux privés, redirections et réponses compressées sont rejetés. La preuve et l’invocation utilisent la même IP validée et le même nom d’hôte TLS.</p>
+      <p>Mots-clés JSON Schema 2020-12 pris en charge :</p>
+      <p class="keywords"><code>$schema</code> <code>title</code> <code>description</code> <code>type</code> <code>properties</code> <code>required</code> <code>additionalProperties</code> <code>items</code> <code>enum</code> <code>const</code> <code>minimum</code> <code>maximum</code> <code>exclusiveMinimum</code> <code>exclusiveMaximum</code> <code>minLength</code> <code>maxLength</code> <code>minItems</code> <code>maxItems</code> <code>minProperties</code> <code>maxProperties</code></p>
+      <p>Les autres mots-clés, notamment les références, expressions régulières et compositions de schémas, sont explicitement rejetés. Le service autorise quatre tests simultanés et jusqu’à 250 défis stockés. Limites horaires communes à la préparation et aux tentatives sans résultat en cache : 20 par visiteur, 60 par IP source et 500 par processus. Le déploiement utilise un seul processus de travail ASGI, avec limitation des requêtes et configuration d’un proxy de confiance en périphérie.</p>
+      <p class="scope"><strong>Un succès concerne une seule invocation du fournisseur.</strong> Ce n’est ni une certification du protocole complet, ni une publication sur Hub, ni une preuve d’identité du fournisseur. Les reçus Hub, paiements, découverte, fédération, détection des rejeux et charge ne sont pas testés. Hub ne signe pas le rapport ; son horodatage n’est pas attesté par le fournisseur. Des entrées et résultats identiques peuvent produire des signatures identiques : la fraîcheur de la réponse n’est donc pas prouvée.</p>
+      <p><a href="/connect?lang=fr">Connecter votre fournisseur</a></p>
+    </article>
+    <article lang="zh" id="guide-zh" hidden>
+      <p><a href="/connect?lang=zh">返回提供方连接页面</a></p>
+      <p class="eyebrow">AIMARKET-PROVIDER-INVOKE/1</p>
+      <h1>提供方连接指南</h1>
+      <p>通过一次真实调用和与请求绑定的 Ed25519 签名验证，检查你自己的端点。无需 Hub 令牌、保证金、账户或支付通道。</p>
+      <h2>1. 准备测试提供方</h2>
+      <p>请使用无害的输入和测试部署：你的服务执行操作时可能产生费用或副作用。请求头 <code>X-AIMarket-Test-Mode: provider-invoke-v1</code> 仅标识此测试，不授予调用者权限，也不代表调用免费。</p>
+      <p>在 <code>capability.json</code> 中配置 <code>product_id</code>、<code>capability_id</code>、<code>publisher_id</code>、<code>name</code>、<code>invoke_url</code>、<code>provider_pubkey</code>、<code>price_per_call_usd</code>、<code>input_schema</code> 和 <code>output_schema</code>。公开 URL 必须使用 HTTPS 和 443 端口；Ed25519 公钥必须是以 base64 编码的 32 字节公钥。</p>
+      <h2>2. 确认端点控制权</h2>
+      <ol><li>打开<a href="/connect?lang=zh">连接你的提供方</a>，导入清单并填写符合其模式的 JSON 测试输入。</li><li>授权测试调用，然后选择<strong>准备连接</strong>。</li><li>下载证明，并在与你的提供方同源的指定地址提供此 JSON：</li></ol>
+      <div class="command-card"><header><span>.well-known/aimarket-provider-check.json</span><span>JSON</span></header><pre><code>https://your-provider.example/.well-known/aimarket-provider-check.json
+
+{"challenge":"&lt;Playground 签发的 64 字符令牌&gt;"}</code></pre></div>
+      <p>响应类型必须为 <code>application/json</code>，不允许压缩或重定向。挑战与当前浏览器会话、清单和输入绑定，15 分钟后过期。最多可尝试三次控制权验证。</p>
+      <p>使用更新后的 Python 或 TypeScript 模板生成的提供方，在 <code>AIMARKET_ONBOARDING_CHALLENGE</code> 包含签发的令牌时会开放此路由。设置变量并重启提供方，检查后删除该变量。旧版或自定义提供方可以在同一地址提供静态 JSON 证明文件。</p>
+      <h2>3. 运行检查</h2>
+      <p>选择<strong>验证并调用</strong>。Playground 会验证证明，发送一次 POST，检查输出模式并验证 <code>X-Provider-Signature</code>。下载包含签名数据和公钥的报告。</p>
+      <p>使用同一挑战重复请求会返回缓存结果，包括发送调用后发生的失败，不会再次调用。新挑战会授权一次新调用。报告在 15 分钟后过期，服务器重启也会使报告丢失。</p>
+      <h2>本地检查与 CI</h2>
+      <p>CLI 可从更新后的 Playground 源代码副本运行。不要假定此新命令已发布到 PyPI。创建 JSON 输入文件，例如未修改的生成提供方可使用 <code>{}</code>，启动提供方后运行：</p>
+      <div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><pre><code>cd aimarket-playground
+uv sync --extra dev
+uv run aimarket-provider-check ../my-agent/capability.json \
+  --input ../my-agent/test-input.json --allow-loopback &gt; report.json</code></pre></div>
+      <p>退出码 0 表示通过，1 表示失败。失败时也应保存报告。CLI 执行相同的调用、模式和签名检查，但不证明端点控制权。<code>--allow-loopback</code> 仅允许本地开发，不允许任意私有网络。报告包含提供方的结果，请使用不含敏感信息的测试数据。</p>
+      <h2>签名契约</h2>
+      <div class="command-card"><header><span>Ed25519</span><span>JSON</span></header><pre><code>{
+  "capability_id": "my-agent.invoke@v1",
+  "product_id": "my-agent",
+  "input_sha256": "&lt;规范化输入 JSON 的 SHA-256&gt;",
+  "result": {}
+}</code></pre></div>
+      <p>规范化 JSON 使用排序后的键、紧凑分隔符和不转义 Unicode 的 UTF-8 编码。提供方使用 Ed25519 对这些字节签名。为确保 Python 与 TypeScript 的互操作性，请在签名数据中使用整数：当前契约不会跨语言统一 <code>1.0</code> 和 <code>1</code> 的表示。</p>
+      <h2>限制与检查范围</h2>
+      <p>JSON 限制为 64 KiB、16 层深度和 4096 个节点。重复键、非有限数值、无效 UTF-8、私有网络目标、重定向和压缩响应会被拒绝。证明获取与调用使用相同的已验证 IP 和 TLS 主机名。</p>
+      <p>支持的 JSON Schema 2020-12 关键字：</p>
+      <p class="keywords"><code>$schema</code> <code>title</code> <code>description</code> <code>type</code> <code>properties</code> <code>required</code> <code>additionalProperties</code> <code>items</code> <code>enum</code> <code>const</code> <code>minimum</code> <code>maximum</code> <code>exclusiveMinimum</code> <code>exclusiveMaximum</code> <code>minLength</code> <code>maxLength</code> <code>minItems</code> <code>maxItems</code> <code>minProperties</code> <code>maxProperties</code></p>
+      <p>其他关键字，包括引用、正则表达式和模式组合，均会被明确拒绝。服务最多允许四个并发检查和 250 个已存储挑战。准备操作与无缓存结果的尝试共用每小时限额：每位访客 20 次、每个来源 IP 60 次、每个进程 500 次。部署使用单个 ASGI 工作进程，并在边缘配置请求限流和可信代理。</p>
+      <p class="scope"><strong>通过仅适用于提供方的一次调用。</strong>这不是完整协议认证、Hub 发布或提供方身份证明。不测试 Hub 收据、支付、发现、联邦、重放检测或负载。报告本身不由 Hub 签名，其时间戳也未经提供方证明。相同输入和结果可能产生相同签名，因此无法证明响应的新鲜性。</p>
+      <p><a href="/connect?lang=zh">连接你的提供方</a></p>
+    </article>
+  </main>
+</body>
+</html>
