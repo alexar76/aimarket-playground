@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#060914">
+  <title>AIMarket | Connect a provider</title>
+  <link rel="stylesheet" href="/assets/playground.css?v=20260820f">
+  <link rel="stylesheet" href="/assets/connect.css?v=20261006b">
+  <script src="/assets/i18n.js?v=20261007a" defer></script>
+  <script src="/assets/connect.js?v=20261006a" defer></script>
+</head>
+<body>
+  <div class="scene" aria-hidden="true"><div class="scene-grid"></div><i class="noise"></i></div>
+  <header class="nav onboarding-nav">
+    <a class="brand" href="/" data-i18n-aria-label="a11y.home"><span>AI</span>Market <b>Playground</b></a>
+    <nav aria-label="Navigation" data-i18n-aria-label="nav.primary"><a href="/start" data-i18n="nav.start">Developers</a><a href="/" data-text="demo">Live demo</a></nav>
+    <div class="language-switcher" aria-label="Language" data-i18n-aria-label="nav.language">
+      <button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="ru" aria-pressed="false">RU</button><button type="button" data-lang="es" aria-pressed="false">ES</button><button type="button" data-lang="fr" aria-pressed="false">FR</button><button type="button" data-lang="zh" aria-pressed="false">中文</button>
+    </div>
+  </header>
+  <main>
+    <section class="workspace connect-workspace">
+    <header class="page-heading workspace-head"><div><p class="section-label">PROVIDER INVOKE / 1</p><h1 data-text="title">Connect your provider</h1></div><span class="tag" data-text="testMode">Test mode · no Hub payment</span></header>
+    <ol class="steps" aria-label="Progress"><li id="step-1" aria-current="step"><b>1</b><span data-text="contract">Contract</span></li><li id="step-2"><b>2</b><span data-text="ownership">Endpoint control</span></li><li id="step-3"><b>3</b><span data-text="report">Test report</span></li></ol>
+    <div class="workarea workspace-grid">
+      <section class="editor console input-console" aria-labelledby="contract-heading">
+        <header class="console-head"><div class="lights" aria-hidden="true"><i></i><i></i><i></i></div><h2 id="contract-heading" data-text="contract">Contract</h2><b>JSON</b></header>
+        <form id="connect-form">
+          <div class="field-head"><label for="manifest">capability.json</label><label class="upload" for="manifest-file" data-text="import">Import JSON</label><input class="sr-only" type="file" id="manifest-file" accept=".json,application/json"></div>
+          <textarea id="manifest" spellcheck="false" required rows="15" aria-describedby="manifest-note" placeholder='{"product_id": "my-agent", "capability_id": "my-agent.invoke@v1", ...}'></textarea>
+          <p id="manifest-note" class="muted" data-text="manifestNote">Public HTTPS endpoint · Ed25519 provider key</p>
+          <label for="invoke-input" data-text="input">Test input</label>
+          <textarea id="invoke-input" spellcheck="false" required rows="4">{}</textarea>
+          <label class="consent"><input type="checkbox" id="consent" required><span data-text="consent">I control this endpoint and authorize one real call with harmless test data. My service may incur its own costs.</span></label>
+          <button class="run-button" id="prepare" type="submit" data-text="prepare">Prepare connection</button>
+        </form>
+      </section>
+      <section class="verification console" aria-labelledby="verification-heading" aria-busy="false">
+        <header class="console-head section-head"><h2 id="verification-heading" data-text="verification">Verification</h2><span id="status" class="status" role="status" data-text="ready">Ready</span></header>
+        <div id="empty"><div class="empty-state"><div class="radar" aria-hidden="true"><i></i></div><strong data-text="ready">Ready</strong></div><div class="checks-preview"><p><span>01</span><b data-text="manifestCheck">Manifest & input</b></p><p><span>02</span><b data-text="ownership">Endpoint control</b></p><p><span>03</span><b data-text="invokeCheck">Invoke & output schema</b></p><p><span>04</span><b data-text="signatureCheck">Request-bound signature</b></p></div></div>
+        <div id="proof-panel" hidden>
+          <h3 data-text="proofTitle">Endpoint ownership proof</h3>
+          <p class="muted" data-text="proofNote">Serve this JSON at the address below, then run the check. The proof expires after 15 minutes.</p>
+          <code id="proof-url" class="wrap-code"></code>
+          <pre id="proof-json"></pre>
+          <div class="actions"><button type="button" id="download-proof" data-text="downloadProof">Download proof</button><button type="button" id="copy-token" data-text="copyToken">Copy token</button></div>
+          <p class="muted" data-text="generatorNote">Generated Python / TypeScript provider: set AIMARKET_ONBOARDING_CHALLENGE to this token and restart.</p>
+          <button type="button" id="run-check" class="run-button" data-text="run">Verify & invoke</button>
+        </div>
+        <div id="report-panel" hidden>
+          <ul id="checks" class="checks"></ul>
+          <p class="scope" data-text="scope">This report covers one provider invocation and its signature. Hub receipts, payments, discovery and federation are not tested.</p>
+          <details><summary data-text="evidence">Signed evidence & report</summary><pre id="report-json"></pre></details>
+          <div class="actions"><button type="button" id="download-report" data-text="downloadReport">Download report</button><a href="/start?role=provider#after-title" data-i18n="start.provider.after">Publication in Hub</a></div>
+        </div>
+        <p id="error" role="alert" hidden></p>
+      </section>
+    </div>
+    </section>
+    <section class="next-step ci"><div><p class="section-label">CLI / CI</p><h2 data-text="ciTitle">Local & CI</h2><p data-text="ciNote">Same invoke profile. Exit 0 on pass, 1 on failure. Use --allow-loopback for a local provider.</p></div><div class="command-card"><header><span>aimarket-provider-check</span><span>CLI</span></header><code class="wrap-code">aimarket-provider-check capability.json --input test-input.json &gt; report.json</code><a id="guide-link" href="/connect/guide" data-text="guide">Profile & setup guide</a></div></section>
+  </main>
+  <footer><span>AIMarket Protocol v2</span><span data-text="footer">Provider invoke profile · not protocol certification</span></footer>
+</body>
+</html>
