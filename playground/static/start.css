@@ -1,0 +1,63 @@
+[hidden] { display: none !important; }
+.start-main *, .start-nav *, footer { letter-spacing: 0; }
+.start-main { padding-top: 40px; }
+.start-main .workspace { margin-bottom: 48px; }
+.start-main h1 { font: 800 32px/1.2 var(--display); margin: 0; overflow-wrap: anywhere; }
+.start-main h2 { font: 700 21px/1.35 var(--display); margin: 0; overflow-wrap: anywhere; }
+.start-main p { font-size: 14px; line-height: 1.7; color: #a9b7cd; overflow-wrap: anywhere; }
+.start-main p.section-label { color: var(--cyan); font-size: 12px; }
+.start-main a { color: var(--cyan); text-underline-offset: 4px; }
+.start-toolbar { display: flex; flex-wrap: wrap; gap: 24px; padding: 22px 30px; border-bottom: 1px solid var(--line); }
+.start-toolbar fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.start-toolbar legend { color: var(--muted); font-size: 12px; margin-bottom: 8px; }
+.segments { display: flex; border: 1px solid #304563; }
+.segments button { border: 0; background: transparent; color: #a9b7cd; padding: 12px 18px; min-height: 44px; font: 600 14px var(--body); cursor: pointer; }
+.segments button + button { border-left: 1px solid #304563; }
+.segments button[aria-pressed="true"] { background: #17304a; color: var(--cyan); box-shadow: inset 0 -2px var(--cyan); }
+.start-main button:focus-visible, .start-main a:focus-visible, .start-main summary:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+.start-grid { grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); }
+.start-main .console-head { gap: 12px; }
+.kit-overview { padding: 26px 30px; }
+.kit-overview dl { border-top: 1px solid var(--line); margin: 24px 0; padding-top: 18px; }
+.kit-overview dt { color: var(--muted); font-size: 12px; }
+.kit-overview dd { margin: 8px 0 0; font: 500 13px/1.7 ui-monospace, monospace; }
+.kit-overview .run-button { margin: 0; width: 100%; height: auto; min-height: 55px; padding: 14px 18px; gap: 12px; text-align: left; }
+.kit-overview .run-button span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.kit-overview details { margin-top: 18px; font-size: 13px; }
+.kit-overview summary { cursor: pointer; color: var(--cyan); padding: 8px 0; }
+#kit-files { padding-left: 20px; max-height: 260px; overflow: auto; font: 12px/1.9 ui-monospace, monospace; color: var(--muted); overflow-wrap: anywhere; }
+#checksum { display: block; overflow-wrap: anywhere; color: var(--mint); font-size: 12px; }
+.kit-overview p.snapshot { color: var(--muted); font-size: 12px; }
+#download-status, #copy-status { color: var(--mint); font-size: 12px; min-height: 20px; }
+#load-status { color: var(--danger); }
+.steps-console { padding: 0 30px 28px; }
+.start-step { padding: 26px 0 30px; border-bottom: 1px solid var(--line); }
+.start-step > header { display: flex; gap: 14px; align-items: baseline; }
+.start-step > header > span { font: 12px ui-monospace, monospace; color: var(--cyan); }
+.start-step .command-card { margin: 20px 12px 0 0; }
+.start-step .command-card header { padding: 6px 12px 6px 18px; min-height: 48px; }
+.start-step .command-card pre { margin: 0; padding: 20px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.start-step .command-card code { display: inline; padding: 0; font: 13px/1.8 ui-monospace, monospace; }
+.copy-command { min-width: 40px; min-height: 40px; font-size: 20px !important; }
+.start-actions { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; line-height: 1.8; }
+.start-after { max-width: 900px; padding: 0 30px 40px; }
+.start-after .scope { border-top: 1px solid var(--line); padding-top: 24px; margin-top: 28px; font-size: 13px; color: var(--muted); }
+@media (max-width: 920px) {
+  .start-grid { grid-template-columns: 1fr; }
+  .start-main .input-console { border-right: 0; border-bottom: 1px solid var(--line); }
+  .start-nav .language-switcher { margin-left: auto; }
+}
+@media (max-width: 620px) {
+  .start-main { padding-top: 22px; }
+  .start-main h1 { font-size: 25px; }
+  .start-main h2 { font-size: 19px; }
+  .start-main .workspace-head, .start-toolbar, .kit-overview { padding: 20px 18px; }
+  .steps-console { padding: 0 18px 24px; }
+  .start-after { padding: 0 3px 28px; }
+  .start-main .console-head { padding-inline: 18px; }
+  .segments button { padding: 11px 13px; }
+}
+@media (max-width: 350px) {
+  .start-nav { height: auto; min-height: 76px; flex-wrap: wrap; gap: 10px; padding-block: 12px; }
+  .start-nav .language-switcher { margin-left: 0; }
+}

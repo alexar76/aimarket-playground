@@ -1,0 +1,20 @@
+.guide article { max-width: 1040px; padding: 64px 5vw 100px; margin: auto; }
+.guide h1 { font-size: 48px; margin: 16px 0 28px; }
+.guide h2 { font: 800 28px/1.2 var(--display); margin: 56px 0 20px; }
+.guide p, .guide li { font-size: 16px; line-height: 1.7; color: #aebbd0; }
+.guide li { margin-bottom: 12px; }
+.guide strong { color: var(--text); }
+.guide code { font-size: 13px; overflow-wrap: anywhere; color: #a5ecc0; }
+.guide .command-card { margin: 28px 14px 40px 0; padding-bottom: 0; }
+.guide .command-card pre { background: transparent; border: 0; max-height: none; margin: 0; padding: 0; }
+.guide .command-card code { white-space: pre-wrap; padding: 22px 18px; }
+.guide .keywords { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.guide .scope { color: #e1c384; margin-top: 32px; }
+.guide .eyebrow { font-size: 12px; font-weight: 800; color: var(--cyan); margin-top: 40px; }
+@media (max-width: 620px) {
+  .guide article { padding: 40px 0 64px; }
+  .guide h1 { font-size: 32px; }
+  .guide h2 { font-size: 24px; margin-top: 44px; }
+  .guide p, .guide li { font-size: 15px; }
+  .guide ol { padding-left: 22px; }
+}

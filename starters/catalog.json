@@ -1,0 +1,34 @@
+{
+  "provider-python": {
+    "requirements": "Python 3.11+",
+    "commands": [
+      "cd aimarket-provider\npython3 -m venv .venv\n.venv/bin/python -m pip install -e '.[dev]' -r check-requirements.txt\n.venv/bin/python configure_provider.py",
+      ".venv/bin/python -m pytest\n.venv/bin/python validate_manifest.py\n.venv/bin/python check_local.py > report.json",
+      ".venv/bin/python agent.py"
+    ]
+  },
+  "provider-typescript": {
+    "requirements": "Node.js 22+ / Python 3.11+",
+    "commands": [
+      "cd aimarket-provider\nnpm install\nnpm run configure\npython3 -m venv .venv\n.venv/bin/python -m pip install -r check-requirements.txt",
+      "npm test\nnpm run validate\n.venv/bin/python check_local.py > report.json",
+      "npm start"
+    ]
+  },
+  "consumer-python": {
+    "requirements": "Python 3.11+",
+    "commands": [
+      "cd aimarket-consumer\npython3 -m venv .venv\n.venv/bin/python -m pip install -r requirements.txt\n.venv/bin/python -m unittest -v",
+      ".venv/bin/python client.py",
+      ".venv/bin/python client.py --invoke --budget 0.01"
+    ]
+  },
+  "consumer-typescript": {
+    "requirements": "Node.js 22+",
+    "commands": [
+      "cd aimarket-consumer\nnpm install\nnpm test",
+      "npm run discover",
+      "npm run invoke"
+    ]
+  }
+}
