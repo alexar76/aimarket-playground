@@ -172,7 +172,7 @@ def get_run(run_id: str, x_playground_visitor: str = Header(default="")) -> dict
     return RUNS[run_id]
 
 
-@app.get("/", include_in_schema=False)
+@app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)  # HEAD: link checkers probe it; 405 read as "down"
 def index() -> FileResponse:
     return FileResponse(STATIC / "index.html")
 
