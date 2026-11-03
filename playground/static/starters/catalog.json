@@ -2,16 +2,16 @@
   "version": 1,
   "sources": {
     "aimarket-agent/LICENSE": "5cc0f26c2644eba9290d80ac2b027afc66f148fee9debf9721ceeeffe29c4d80",
-    "aimarket-agent/README.md": "7d4e40a173494cc5b0537f29a1658c83c090749ee8a838869901fbf9eb82dc9d",
-    "aimarket-agent/aimarket_agent/__init__.py": "10c11aa745bfe73aaea23f8c74ab849ac3fa79905e4fd6f004af8be488fc39f2",
-    "aimarket-agent/aimarket_agent/a2a.py": "f18a36a75dcc30a0ed8edd2f0acbbb409159dd444600c071202d3bd490a8cb70",
-    "aimarket-agent/aimarket_agent/agent.py": "09d29ce3cd920f87f0636cab9b41d0dba34e9c8bccff349972072a1c5440f3fb",
-    "aimarket-agent/aimarket_agent/cli.py": "c6547a1685f3f874289108e6a91ad1ec9c3c0de719c02bce48673dde132ea077",
+    "aimarket-agent/README.md": "7ee8be6ac6c11000cc6aff00abb801a6cebfda747786aba204e37d88731c4496",
+    "aimarket-agent/aimarket_agent/__init__.py": "7556f2808936d3fa6dfc2eecde9f02ac7fe9953ea85c477e2a3683e921e5dc2f",
+    "aimarket-agent/aimarket_agent/a2a.py": "588c78ad3b74a8285331a97e7c6f2e3db5f046366e30f6b642391239c11e154e",
+    "aimarket-agent/aimarket_agent/agent.py": "b2bead84d1e13f21f2e347dad5087708adbc1ef5c2165e583009c8a9c0a656fd",
+    "aimarket-agent/aimarket_agent/cli.py": "634d91f2c7bfa0371004d8b384b16a7b8624f59f0266a0ae7978d4d1fd3df94b",
     "aimarket-agent/aimarket_agent/mandates.py": "8e0ce8b26d2b46dd857549e9b819172a80150f71941f4a48184bee208657b387",
     "aimarket-agent/aimarket_agent/py.typed": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "aimarket-agent/aimarket_agent/receipts.py": "d9ae174c63e4a4372b3afc0719fc8136a987058747838c61a21330623bcb4d97",
     "aimarket-agent/aimarket_agent/topup.py": "87630b6911c0fc15945e5173465a510ab089647e1d3983d49d80a57e6a4abadf",
-    "aimarket-agent/pyproject.toml": "b31cdde05d3e7fefa237f902fac6369da23c93ea50c8b168bdf5aa21caa783bb",
+    "aimarket-agent/pyproject.toml": "920acb189a230f4f104facfb59a1a8265477d83ed7af6fd03a7106940b2a35d2",
     "aimarket-playground/LICENSE": "7f1b1176bebe556b7eef26c4b8bc15fb69746a63457cad07361d4daea5032a35",
     "aimarket-playground/playground/provider_check.py": "103480cb07e5e0cd1c9709b0ba33f8df9c4a8fbda1f8c08c1c97a4baddd1798b",
     "aimarket-playground/playground/provider_http.py": "3d6ffe5f30c94150e4501a548f2b47863711ee06a1e176b833c8bc4e8e719c4b",
@@ -58,7 +58,7 @@
     "create-aimarket-agent/npm/templates/base/test/canonicalJson.test.ts": "acfdf846f81ff43ad8a46327ba6f279571b628453069d64c91b93e225d27ca37",
     "create-aimarket-agent/npm/templates/base/test/validateManifest.test.ts": "2f8cc705ca8fc29165bf29752bc27901c98e5f639d6b438eb0683df74d2bc851",
     "create-aimarket-agent/npm/templates/base/tsconfig.json": "04bb8486fdcdb5147e71112984a435092a7c70853b62c2c615974aef4f473dc5",
-    "create-aimarket-agent/src/create_aimarket_agent/__init__.py": "6b785512b58e23cc6567dd7d3254f48b5ce2f019d2f4a0f7ad426398ae05d2ad",
+    "create-aimarket-agent/src/create_aimarket_agent/__init__.py": "ea5b26d21223963aa4d6983249a6371987fd856f6207669856a05377b9296fa0",
     "create-aimarket-agent/src/create_aimarket_agent/cli.py": "58c853e779026d688b515cba37700de178a1388d567db37fe82e38054d89e3fe",
     "create-aimarket-agent/src/create_aimarket_agent/templates/base/.dockerignore": "2f653ae4dff718d1af3f0f2fad8de7fc45c8cf8b577ee3521aa9760d18a1e9dd",
     "create-aimarket-agent/src/create_aimarket_agent/templates/base/.env.example": "9f5bc8ec9d212c5fb3648d98981e0d4db674d40e8fd871a506ab96fa00c3124b",
@@ -84,8 +84,8 @@
         ".venv/bin/python agent.py"
       ],
       "url": "/starters/provider-python.zip",
-      "sha256": "382a823cee23eceed7baa2a8abdc0e441a5ff18c23208aeca0e4f65abb788bea",
-      "bytes": 28991,
+      "sha256": "f649878ef5ebc31ac91a360a67dfd02e3e564d2a52a19d67f2f6277b6ea9db00",
+      "bytes": 28990,
       "files": [
         ".dockerignore",
         ".env.example",
@@ -125,8 +125,8 @@
         "npm start"
       ],
       "url": "/starters/provider-typescript.zip",
-      "sha256": "0d20c60980aee0a3b335412dbd501e1bc3d8a8fdb701f428a83ed7bf738b8c0c",
-      "bytes": 35679,
+      "sha256": "254ecf5b1dd49b16c1885550d2d6c8dd17652dde66ddcc03bcc49b87d81cd48b",
+      "bytes": 35678,
       "files": [
         ".dockerignore",
         ".env.example",
@@ -169,8 +169,8 @@
         ".venv/bin/python client.py --invoke --budget 0.01"
       ],
       "url": "/starters/consumer-python.zip",
-      "sha256": "76080f78f4b461f33b86ec5038a9a64d80e66df5e43ea69b3162c6817ed1d9c9",
-      "bytes": 57468,
+      "sha256": "4057ac0cead8cbae542b1a3183e5b8191f782f3803af4ddb72df2cdb3ceddacb",
+      "bytes": 59412,
       "files": [
         ".github/workflows/onboarding.yml",
         ".gitignore",
@@ -206,8 +206,8 @@
         "npm run invoke"
       ],
       "url": "/starters/consumer-typescript.zip",
-      "sha256": "c408e3b851e63f7880723be4e6dbaa7406c04b1a5eae57e7a9bf2775fd6055e4",
-      "bytes": 22152,
+      "sha256": "9c604868429bf664e748632685c448fa842aaaf4e9bc22c4b4d6cdfdf9e89ed8",
+      "bytes": 22151,
       "files": [
         ".github/workflows/onboarding.yml",
         ".gitignore",

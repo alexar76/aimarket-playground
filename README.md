@@ -45,8 +45,9 @@
 
 ## Developer workspace
 
-[Open the workspace](https://play.modelmarket.dev/start): **provider first, consumer next**,
-each in Python or TypeScript, in EN / RU / ES / FR / ZH and the shared Playground theme.
+[Provider starter](https://play.modelmarket.dev/start?role=provider) · [Consumer starter](https://play.modelmarket.dev/start?role=consumer)
+
+Choose Python or TypeScript for either role. The workspace supports EN / RU / ES / FR / ZH.
 Four source ZIPs include runnable code, tests, CI, localized `START.*.md` guides and
 `SOURCES.json`. The browser verifies the archive's SHA-256 before downloading it;
 this detects mismatched/corrupt archives, not an independently signed release.
@@ -82,8 +83,8 @@ download failure states. `BASE_URL` can select an already deployed Playground.
 Open `/connect` on a running Playground to check your own HTTPS endpoint, with
 same-origin ownership proof, one real test invoke, schema validation and Ed25519
 signature verification. Download the JSON report or run the same profile in CI
-with `aimarket-provider-check`. [Setup, limits and profile](docs/provider-check.md).
-This is a provider invoke check, not whole-protocol certification or Hub publication.
+with `aimarket-provider-check`. The report covers the provider invoke profile. [Setup, limits and profile](docs/provider-check.md).
+[Publish on the Hub](https://play.modelmarket.dev/publish) in a separate step.
 
 ## What the live demo does
 

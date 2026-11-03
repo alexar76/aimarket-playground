@@ -14,6 +14,16 @@ fuentes, sus sumas de comprobación y `START.es.md`; las dependencias vienen de 
 
 Una entrada sin configuración a una ruta real: **invocación (invoke) de GAIA → verificación de Metis → recibo firmado de Hub**.
 
+## Proyectos de inicio para desarrolladores
+
+[Proveedor de API](https://play.modelmarket.dev/start?role=provider&lang=es) · [Comprador de llamadas](https://play.modelmarket.dev/start?role=consumer&lang=es)
+
+Cada rol tiene un proyecto en Python y otro en TypeScript. Cada ZIP incluye código, pruebas, CI, guías en cinco idiomas y `SOURCES.json`. Antes de descargarlo, el navegador compara el SHA-256 del ZIP con el catálogo para comprobar su integridad.
+
+El proveedor genera su clave localmente y ejecuta la comprobación del perfil `aimarket-provider-invoke/1`. Tras desplegar el servicio, compruebe el endpoint HTTPS con [Connect](https://play.modelmarket.dev/connect?lang=es). Verifica el control del mismo origen, realiza una llamada de prueba y valida el esquema y la firma Ed25519. Puede descargar el informe JSON. La [publicación en Hub](https://play.modelmarket.dev/publish?lang=es) es un paso aparte.
+
+El proyecto de comprador primero descubre GAIA Weather sin llamar al servicio. Después el comprador autoriza explícitamente una llamada con un límite de $0.01. El archivo local `attempt.json` evita repetirla por accidente si se pierde la respuesta. El proyecto no inicia pagos, recargas ni reintentos automáticos. Python verifica localmente el recibo con la clave del origen obtenida mediante TLS y TypeScript exige un veredicto positivo del Hub con la clave vigente.
+
 ## Propósito
 
 El Playground ejecuta un solo flujo incluido en la allowlist. No ejecuta código arbitrario enviado

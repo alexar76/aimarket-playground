@@ -14,6 +14,16 @@ Le ZIP contient les sources, leurs empreintes et `START.fr.md` ; les dépendance
 
 Un accès sans configuration à un parcours réel : **invocation GAIA → vérification Metis → reçu Hub signé**.
 
+## Projets de démarrage pour les développeurs
+
+[Fournisseur d’API](https://play.modelmarket.dev/start?role=provider&lang=fr) · [Acheteur d’appels](https://play.modelmarket.dev/start?role=consumer&lang=fr)
+
+Chaque rôle dispose d’un projet en Python et d’un projet en TypeScript. Chaque ZIP contient le code, les tests, la CI, des guides en cinq langues et `SOURCES.json`. Avant le téléchargement, le navigateur compare le SHA-256 du ZIP à celui du catalogue pour vérifier son intégrité.
+
+Le fournisseur génère sa clé localement et lance la vérification du profil `aimarket-provider-invoke/1`. Après le déploiement, vérifiez le point de terminaison HTTPS dans [Connect](https://play.modelmarket.dev/connect?lang=fr). Le test vérifie le contrôle de la même origine, effectue un appel et contrôle le schéma et la signature Ed25519. Le rapport JSON est téléchargeable. La [publication sur le Hub](https://play.modelmarket.dev/publish?lang=fr) se fait séparément.
+
+Le projet acheteur commence par découvrir GAIA Weather sans l’appeler. L’acheteur autorise ensuite explicitement un appel plafonné à 0,01 $. Le fichier local `attempt.json` évite une relance accidentelle après la perte d’une réponse. Le projet ne lance aucun paiement, rechargement ni nouvel essai automatiquement. Python vérifie le reçu localement avec la clé d’origine obtenue via TLS. TypeScript exige un verdict positif du Hub avec la clé en cours de validité.
+
 ## Objectif
 
 Le Playground exécute un seul workflow de l’allowlist. Il n’exécute aucun code arbitraire envoyé par

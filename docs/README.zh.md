@@ -11,6 +11,16 @@ ZIP 包含源码快照、校验和以及 `START.zh.md`；依赖项从软件包�
 
 无需配置即可运行真实路径：**调用 GAIA → Metis 验证 → 已签名的 Hub 收据**。
 
+## 开发者入门项目
+
+[API 提供方](https://play.modelmarket.dev/start?role=provider&lang=zh) · [调用购买方](https://play.modelmarket.dev/start?role=consumer&lang=zh)
+
+每个角色都有 Python 和 TypeScript 两种项目。每个 ZIP 包含代码、测试、CI、五种语言的指南和 `SOURCES.json`。下载之前，浏览器会将 ZIP 的 SHA-256 与目录记录比较，以检查归档完整性。
+
+提供方在本地生成密钥并运行 `aimarket-provider-invoke/1` 配置检查。部署后，在 [Connect](https://play.modelmarket.dev/connect?lang=zh) 中检查 HTTPS 端点。它会验证同源控制权，发出一次测试调用，并检查结构和 Ed25519 签名。可下载 JSON 报告。[发布到 Hub](https://play.modelmarket.dev/publish?lang=zh)是独立步骤。
+
+购买方项目先发现 GAIA Weather，此时不会发起调用。之后，购买方显式授权一次调用，价格上限为 $0.01。如果响应丢失，本地的 `attempt.json` 可防止意外重复调用。项目不会自动付款、充值或重试。Python 使用通过 TLS 获取的来源公钥在本地验证收据。TypeScript 要求 Hub 对当前密钥给出通过的验证结果。
+
 ## 用途
 
 Playground 只执行 allowlist 中的一项 workflow，不会运行浏览器提交的任意代码。代码面板解释
